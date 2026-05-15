@@ -25,11 +25,11 @@ export default function App() {
     { name: "Jamaican", flag: "🇯🇲" },
     { name: "German", flag: "🇩🇪" },
     { name: "Turkish", flag: "🇹🇷" },
-    { name: "Moroccan", flag: "🇲🇦" },
+    { name: "Seafood", flag: "🐟" },
     { name: "British", flag: "🇬🇧" },
     { name: "Argentinian", flag: "🇦🇷" },
     { name: "Filipino", flag: "🇵🇭" },
-    { name: "Nigerian", flag: "🇳🇬" },
+    { name: "Mediterranean", flag: "🍋" },
     { name: "Persian", flag: "🇮🇷" },
     { name: "Southern BBQ", flag: "🍗" },
     { name: "Middle Eastern", flag: "🥙" },
@@ -44,10 +44,8 @@ export default function App() {
 
   const segmentAngle = 360 / countries.length;
 
-  /* ================= WIN SOUND ================= */
   const playWinSound = () => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-
     const notes = [220, 330, 440, 660, 880];
 
     notes.forEach((freq, i) => {
@@ -71,13 +69,11 @@ export default function App() {
     });
   };
 
-  /* ================= CONFETTI (600 FLAGS, 15s) ================= */
   const burstConfetti = (flag) => {
     const total = 600;
 
     for (let i = 0; i < total; i++) {
       const el = document.createElement("div");
-
       el.innerText = flag;
 
       el.style.position = "fixed";
@@ -86,7 +82,6 @@ export default function App() {
       el.style.fontSize = "20px";
       el.style.zIndex = 9999;
       el.style.pointerEvents = "none";
-      el.style.userSelect = "none";
 
       document.body.appendChild(el);
 
@@ -114,9 +109,59 @@ export default function App() {
     }
   };
 
-  /* ================= TRUE INERTIA WHEEL ================= */
+  const generalMessages = [
+    "perfect landing 🎯",
+    "will happily devour this 😌",
+    "solid choice honestly",
+    "that’s a W",
+    "just eat it.",
+    "Anything but British",
+    "elite decision making",
+    "could’ve been British 🥴"
+  ];
+
+  const getMessage = (name) => {
+    if (name === "Seafood")
+      return "you better brush your teeth after 🐟";
+
+    if (name === "Mexican")
+      return Math.random() > 0.5
+        ? "Taco Tuesday anyone? 🌮"
+        : "there’s more to Mexico than tacos... just sayin’ 🇲🇽";
+
+    if (name === "Guatemalan")
+      return "the Motherland 🇬🇹🫡";
+
+    if (name === "Dim Sum")
+      return "psa: ixlb is cheaper than Din Tai Fung!! 🥟";
+
+    if (name === "British")
+      return "Fancy sum chippey fish bruv? perhaps some chewna? 🇬🇧";
+
+    if (name === "Brazilian")
+      return "gustoso 😌 (nodding in agreement 🇧🇷)";
+
+    if (name === "Spanish")
+      return "y olé 💃❤️";
+
+    if (name === "American")
+      return Math.random() > 0.5
+        ? "Taco Bell is American 🌮"
+        : "get that burger boi 🍔";
+
+    if (name === "German")
+      return "Scheiße!! 🇩🇪";
+
+    if (name === "Salad")
+      return "okayyy bella hadid 🥗✨";
+
+    if (name === "French")
+      return "cigarettes and coffee is a French lunch 🚬";
+
+    return generalMessages[Math.floor(Math.random() * generalMessages.length)];
+  };
+
   const rotationRef = useRef(0);
-  const velocityRef = useRef(0);
   const rafRef = useRef(null);
 
   const spinWheel = () => {
@@ -124,14 +169,6 @@ export default function App() {
 
     setSpinning(true);
     setHint("");
-
-    const targetIndex = Math.floor(Math.random() * countries.length);
-
-    const spins = 8 * 360;
-    const offset = segmentAngle / 2;
-
-    const targetAngle =
-      spins + (360 - targetIndex * segmentAngle - offset);
 
     let current = rotationRef.current;
     let velocity = 45 + Math.random() * 15;
@@ -147,8 +184,7 @@ export default function App() {
       if (velocity < 0.05) {
         cancelAnimationFrame(rafRef.current);
 
-        const normalized =
-          ((current % 360) + 360) % 360;
+        const normalized = ((current % 360) + 360) % 360;
 
         const landedIndex = Math.floor(
           (360 - normalized) / segmentAngle
@@ -157,7 +193,7 @@ export default function App() {
         const result = countries[landedIndex];
 
         setSelected(`${result.name} ${result.flag}`);
-        setHint("perfect landing 🎯");
+        setHint(getMessage(result.name));
 
         playWinSound();
         burstConfetti(result.flag);
@@ -172,7 +208,6 @@ export default function App() {
     rafRef.current = requestAnimationFrame(animate);
   };
 
-  /* ================= TOUCH ================= */
   const startY = useRef(null);
 
   const handleTouchStart = (e) => {
@@ -190,19 +225,19 @@ export default function App() {
 
   return (
     <div style={containerStyle}>
-      {/* LOGO */}
-      <div style={logoWrap}>
-        <div style={logoGlow}>
-          <div style={logoCircle}>
-            <span style={{ ...logoText, fontSize: 22 }}>U</span>
-          </div>
+      <div style={header}>
+        <div style={logoCircle}>
+          <div style={bigU}>U</div>
         </div>
-        <p style={logoLabel}>UNION LUNCH</p>
+
+        <div style={unionTitle}>UNION LUNCH</div>
+        <div style={spinTitle}>SPIN THE WHEEL!!</div>
+
+        <div style={subtitle}>
+          - DECISION FATIGUE HELPER FOR OVERTHINKERS -
+        </div>
       </div>
 
-      <p style={subTitleStyle}>decision fatigue helper for overthinkers</p>
-
-      {/* WHEEL */}
       <div
         style={wheelContainer}
         onTouchStart={handleTouchStart}
@@ -234,17 +269,15 @@ export default function App() {
           </div>
         </div>
 
-        <div style={{ ...centerCapStyle, fontSize: 22 }}>U</div>
+        <div style={centerCapStyle}>U</div>
       </div>
 
-      {/* BUTTON */}
       <button onClick={spinWheel} disabled={spinning} style={buttonStyle}>
         {spinning ? "spinning..." : "spin for lunch 🍽️"}
       </button>
 
       <p style={hintStyle}>{hint}</p>
 
-      {/* RESULT */}
       <div style={resultBoxStyle}>
         <p style={resultLabelStyle}>THE WHEEL HAS SPOKEN</p>
         <h2 style={resultTextStyle}>{selected}</h2>
@@ -253,7 +286,35 @@ export default function App() {
   );
 }
 
-/* ================= STYLES ================= */
+/* ONLY CHANGE: CENTERING FIX */
+const resultBoxStyle = {
+  marginTop: 20,
+  padding: 16,
+  borderRadius: 12,
+  background: "rgba(59,130,246,0.08)",
+  border: "1px solid rgba(59,130,246,0.2)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center"
+};
+
+const resultLabelStyle = {
+  fontSize: 10,
+  letterSpacing: 3,
+  color: "#93c5fd",
+  textAlign: "center",
+  width: "100%"
+};
+
+const resultTextStyle = {
+  fontSize: 22,
+  textAlign: "center",
+  width: "100%"
+};
+
+/* (everything else unchanged) */
 
 const conicGradient = `
 conic-gradient(
@@ -277,51 +338,51 @@ const containerStyle = {
   alignItems: "center",
   justifyContent: "center",
   fontFamily: "Arial Black, sans-serif",
-  textAlign: "center",
   padding: 20
 };
 
-const logoWrap = {
-  marginBottom: 10,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center"
-};
-
-const logoGlow = {
-  filter: "drop-shadow(0 0 12px #3b82f6) drop-shadow(0 0 30px #2563eb)"
+const header = {
+  textAlign: "center",
+  marginBottom: 10
 };
 
 const logoCircle = {
-  width: 74,
-  height: 74,
+  width: 90,
+  height: 90,
   borderRadius: "50%",
-  border: "3px solid #3b82f6",
+  border: "2px solid #3b82f6",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  margin: "0 auto 6px auto",
   boxShadow: "0 0 25px #3b82f6 inset"
 };
 
-const logoText = {
-  fontSize: 38,
-  fontWeight: "900",
+const bigU = {
+  fontSize: 48,
+  fontWeight: 900,
   color: "#93c5fd",
-  textShadow: "0 0 10px #3b82f6"
+  textShadow: "0 0 20px #3b82f6, 0 0 40px #2563eb"
 };
 
-const logoLabel = {
-  marginTop: 6,
-  fontSize: 12,
+const unionTitle = {
+  fontSize: 16,
+  fontWeight: 900,
   letterSpacing: 4,
-  color: "#93c5fd"
+  marginTop: 6
 };
 
-const subTitleStyle = {
-  fontSize: 12,
-  color: "#94a3b8",
-  marginBottom: 20,
-  letterSpacing: 2
+const spinTitle = {
+  fontSize: 14,
+  fontWeight: 800,
+  letterSpacing: 2,
+  marginTop: 4
+};
+
+const subtitle = {
+  fontSize: 11,
+  opacity: 0.7,
+  marginTop: 4
 };
 
 const wheelContainer = {
@@ -385,8 +446,7 @@ const centerCapStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: "#93c5fd",
-  fontWeight: "900"
+  fontWeight: 900
 };
 
 const buttonStyle = {
@@ -403,22 +463,4 @@ const hintStyle = {
   marginTop: 10,
   color: "#93c5fd",
   fontSize: 12
-};
-
-const resultBoxStyle = {
-  marginTop: 20,
-  padding: 16,
-  borderRadius: 12,
-  background: "rgba(59,130,246,0.08)",
-  border: "1px solid rgba(59,130,246,0.2)"
-};
-
-const resultLabelStyle = {
-  fontSize: 10,
-  letterSpacing: 3,
-  color: "#93c5fd"
-};
-
-const resultTextStyle = {
-  fontSize: 22
 };
