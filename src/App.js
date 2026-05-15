@@ -44,8 +44,11 @@ export default function App() {
 
   const segmentAngle = 360 / countries.length;
 
+  /* ================= SOUND ================= */
+
   const playWinSound = () => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
     const notes = [220, 330, 440, 660, 880];
 
     notes.forEach((freq, i) => {
@@ -56,6 +59,7 @@ export default function App() {
       o.frequency.value = freq;
 
       g.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.08);
+
       g.gain.exponentialRampToValueAtTime(
         0.001,
         ctx.currentTime + i * 0.08 + 0.2
@@ -69,11 +73,14 @@ export default function App() {
     });
   };
 
+  /* ================= CONFETTI ================= */
+
   const burstConfetti = (flag) => {
     const total = 600;
 
     for (let i = 0; i < total; i++) {
       const el = document.createElement("div");
+
       el.innerText = flag;
 
       el.style.position = "fixed";
@@ -82,6 +89,7 @@ export default function App() {
       el.style.fontSize = "20px";
       el.style.zIndex = 9999;
       el.style.pointerEvents = "none";
+      el.style.userSelect = "none";
 
       document.body.appendChild(el);
 
@@ -108,6 +116,8 @@ export default function App() {
       }, delay);
     }
   };
+
+  /* ================= RESULT MESSAGES ================= */
 
   const generalMessages = [
     "perfect landing 🎯",
@@ -136,10 +146,10 @@ export default function App() {
       return "psa: ixlb is cheaper than Din Tai Fung!! 🥟";
 
     if (name === "British")
-      return "Fancy sum chippey fish bruv? perhaps some chewna? 🇬🇧";
+      return "Fancy sum chippy fish bruv? perhaps some chewna? 🇬🇧";
 
     if (name === "Brazilian")
-      return "gustoso 😌 (nodding in agreement 🇧🇷)";
+      return "gustoso 😌 🇧🇷";
 
     if (name === "Spanish")
       return "y olé 💃❤️";
@@ -155,11 +165,18 @@ export default function App() {
     if (name === "Salad")
       return "okayyy bella hadid 🥗✨";
 
-    if (name === "French")
-      return "cigarettes and coffee is a French lunch 🚬";
+    if (name === "Italian")
+      return "That’s amore!! 🤌🇮🇹";
 
-    return generalMessages[Math.floor(Math.random() * generalMessages.length)];
+    if (name === "French")
+      return "Cigarettes and coffee it is... 🚬";
+
+    return generalMessages[
+      Math.floor(Math.random() * generalMessages.length)
+    ];
   };
+
+  /* ================= WHEEL ================= */
 
   const rotationRef = useRef(0);
   const rafRef = useRef(null);
@@ -171,42 +188,55 @@ export default function App() {
     setHint("");
 
     let current = rotationRef.current;
+
     let velocity = 45 + Math.random() * 15;
+
     const friction = 0.985;
 
     const animate = () => {
       velocity *= friction;
+
       current += velocity;
 
       rotationRef.current = current;
+
       setRotation(current);
 
       if (velocity < 0.05) {
         cancelAnimationFrame(rafRef.current);
 
-        const normalized = ((current % 360) + 360) % 360;
+        const normalized =
+          ((current % 360) + 360) % 360;
 
-        const landedIndex = Math.floor(
-          (360 - normalized) / segmentAngle
-        ) % countries.length;
+        const landedIndex =
+          Math.floor(
+            (360 - normalized) / segmentAngle
+          ) % countries.length;
 
         const result = countries[landedIndex];
 
         setSelected(`${result.name} ${result.flag}`);
+
         setHint(getMessage(result.name));
 
         playWinSound();
+
         burstConfetti(result.flag);
 
         setSpinning(false);
+
         return;
       }
 
-      rafRef.current = requestAnimationFrame(animate);
+      rafRef.current =
+        requestAnimationFrame(animate);
     };
 
-    rafRef.current = requestAnimationFrame(animate);
+    rafRef.current =
+      requestAnimationFrame(animate);
   };
+
+  /* ================= TOUCH ================= */
 
   const startY = useRef(null);
 
@@ -217,26 +247,39 @@ export default function App() {
   const handleTouchEnd = (e) => {
     if (!startY.current) return;
 
-    const diff = startY.current - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 30) spinWheel();
+    const diff =
+      startY.current - e.changedTouches[0].clientY;
+
+    if (Math.abs(diff) > 30) {
+      spinWheel();
+    }
 
     startY.current = null;
   };
 
   return (
     <div style={containerStyle}>
+      {/* HEADER */}
+
       <div style={header}>
         <div style={logoCircle}>
           <div style={bigU}>U</div>
         </div>
 
-        <div style={unionTitle}>UNION LUNCH</div>
-        <div style={spinTitle}>SPIN THE WHEEL!!</div>
+        <div style={unionTitle}>
+          UNION LUNCH
+        </div>
+
+        <div style={spinTitle}>
+          SPIN THE WHEEL!!
+        </div>
 
         <div style={subtitle}>
           - DECISION FATIGUE HELPER FOR OVERTHINKERS -
         </div>
       </div>
+
+      {/* WHEEL */}
 
       <div
         style={wheelContainer}
@@ -269,52 +312,43 @@ export default function App() {
           </div>
         </div>
 
-        <div style={centerCapStyle}>U</div>
+        <div style={centerCapStyle}>
+          U
+        </div>
       </div>
 
-      <button onClick={spinWheel} disabled={spinning} style={buttonStyle}>
-        {spinning ? "spinning..." : "spin for lunch 🍽️"}
+      {/* BUTTON */}
+
+      <button
+        onClick={spinWheel}
+        disabled={spinning}
+        style={buttonStyle}
+      >
+        {spinning
+          ? "spinning..."
+          : "spin for lunch 🍽️"}
       </button>
+
+      {/* HINT */}
 
       <p style={hintStyle}>{hint}</p>
 
+      {/* RESULT */}
+
       <div style={resultBoxStyle}>
-        <p style={resultLabelStyle}>THE WHEEL HAS SPOKEN</p>
-        <h2 style={resultTextStyle}>{selected}</h2>
+        <p style={resultLabelStyle}>
+          THE WHEEL HAS SPOKEN
+        </p>
+
+        <h2 style={resultTextStyle}>
+          {selected}
+        </h2>
       </div>
     </div>
   );
 }
 
-/* ONLY CHANGE: CENTERING FIX */
-const resultBoxStyle = {
-  marginTop: 20,
-  padding: 16,
-  borderRadius: 12,
-  background: "rgba(59,130,246,0.08)",
-  border: "1px solid rgba(59,130,246,0.2)",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  textAlign: "center"
-};
-
-const resultLabelStyle = {
-  fontSize: 10,
-  letterSpacing: 3,
-  color: "#93c5fd",
-  textAlign: "center",
-  width: "100%"
-};
-
-const resultTextStyle = {
-  fontSize: 22,
-  textAlign: "center",
-  width: "100%"
-};
-
-/* (everything else unchanged) */
+/* ================= STYLES ================= */
 
 const conicGradient = `
 conic-gradient(
@@ -331,7 +365,8 @@ conic-gradient(
 
 const containerStyle = {
   minHeight: "100vh",
-  background: "radial-gradient(circle at top, #020617, #0b1220)",
+  background:
+    "radial-gradient(circle at top, #020617, #0b1220)",
   color: "white",
   display: "flex",
   flexDirection: "column",
@@ -355,14 +390,16 @@ const logoCircle = {
   alignItems: "center",
   justifyContent: "center",
   margin: "0 auto 6px auto",
-  boxShadow: "0 0 25px #3b82f6 inset"
+  boxShadow:
+    "0 0 25px #3b82f6 inset"
 };
 
 const bigU = {
   fontSize: 48,
   fontWeight: 900,
   color: "#93c5fd",
-  textShadow: "0 0 20px #3b82f6, 0 0 40px #2563eb"
+  textShadow:
+    "0 0 20px #3b82f6, 0 0 40px #2563eb"
 };
 
 const unionTitle = {
@@ -397,7 +434,8 @@ const pointerStyle = {
   top: -18,
   left: "50%",
   transform: "translateX(-50%)",
-  fontSize: 28
+  fontSize: 28,
+  zIndex: 10
 };
 
 const wheelStyle = {
@@ -405,30 +443,45 @@ const wheelStyle = {
   height: "100%",
   borderRadius: "50%",
   overflow: "hidden",
-  border: "8px solid rgba(147,197,253,0.25)",
-  boxShadow: "0 0 40px rgba(59,130,246,0.25)"
+  border:
+    "8px solid rgba(147,197,253,0.25)",
+  boxShadow:
+    "0 0 40px rgba(59,130,246,0.25)"
 };
 
 const wheelFace = {
   width: "100%",
   height: "100%",
   borderRadius: "50%",
-  transition: "transform 4s cubic-bezier(0.12,0.7,0.12,1)"
+  willChange: "transform",
+  backfaceVisibility: "hidden",
+  WebkitBackfaceVisibility: "hidden",
+  transformStyle: "preserve-3d"
 };
+
+/* UPDATED LABEL POSITION */
 
 const labelContainer = {
   position: "absolute",
   left: "50%",
-  top: 0,
-  height: "50%",
-  transformOrigin: "bottom center"
+  top: "6%",
+  height: "44%",
+  transformOrigin: "bottom center",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start"
 };
 
 const labelStyle = {
   fontSize: 9,
   writingMode: "vertical-rl",
-  transform: "rotate(180deg) translateY(-6px)",
-  color: "white"
+  transform: "rotate(180deg)",
+  color: "white",
+  textAlign: "center",
+  whiteSpace: "nowrap",
+  textShadow:
+    "0 0 6px rgba(0,0,0,0.55)",
+  letterSpacing: "0.3px"
 };
 
 const centerCapStyle = {
@@ -439,28 +492,61 @@ const centerCapStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%,-50%)",
-  background: "radial-gradient(circle, #0b1220, #020617)",
+  background:
+    "radial-gradient(circle, #0b1220, #020617)",
   border: "2px solid #3b82f6",
   boxShadow:
     "0 0 12px #3b82f6, 0 0 30px #2563eb, inset 0 0 18px #3b82f6",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  fontWeight: 900
+  fontWeight: 900,
+  fontSize: 28,
+  color: "#93c5fd"
 };
 
 const buttonStyle = {
-  background: "linear-gradient(135deg,#3b82f6,#8b5cf6)",
+  background:
+    "linear-gradient(135deg,#3b82f6,#8b5cf6)",
   border: "none",
   padding: "14px 26px",
   borderRadius: 999,
   color: "white",
   fontWeight: "bold",
-  boxShadow: "0 0 25px rgba(59,130,246,0.4)"
+  boxShadow:
+    "0 0 25px rgba(59,130,246,0.4)",
+  cursor: "pointer"
 };
 
 const hintStyle = {
   marginTop: 10,
   color: "#93c5fd",
-  fontSize: 12
+  fontSize: 12,
+  textAlign: "center"
+};
+
+const resultBoxStyle = {
+  marginTop: 20,
+  padding: 16,
+  borderRadius: 12,
+  background:
+    "rgba(59,130,246,0.08)",
+  border:
+    "1px solid rgba(59,130,246,0.2)",
+  textAlign: "center",
+  width: 300
+};
+
+const resultLabelStyle = {
+  fontSize: 10,
+  letterSpacing: 3,
+  color: "#93c5fd",
+  textAlign: "center",
+  marginBottom: 8
+};
+
+const resultTextStyle = {
+  fontSize: 22,
+  textAlign: "center",
+  margin: 0
 };
