@@ -17,20 +17,16 @@ export default function App() {
     { name: "Italian", flag: "🇮🇹" },
     { name: "Brazilian", flag: "🇧🇷" },
     { name: "French", flag: "🇫🇷" },
-    { name: "Lebanese", flag: "🇱🇧" },
     { name: "Peruvian", flag: "🇵🇪" },
-    { name: "Greek", flag: "🇬🇷" },
     { name: "Ethiopian", flag: "🇪🇹" },
     { name: "Hawaiian", flag: "🌺" },
     { name: "Jamaican", flag: "🇯🇲" },
     { name: "German", flag: "🇩🇪" },
-    { name: "Turkish", flag: "🇹🇷" },
     { name: "Seafood", flag: "🐟" },
     { name: "British", flag: "🇬🇧" },
     { name: "Argentinian", flag: "🇦🇷" },
     { name: "Filipino", flag: "🇵🇭" },
     { name: "Mediterranean", flag: "🍋" },
-    { name: "Persian", flag: "🇮🇷" },
     { name: "Southern BBQ", flag: "🍗" },
     { name: "Middle Eastern", flag: "🥙" },
     { name: "Dim Sum", flag: "🥟" },
@@ -459,13 +455,11 @@ const wheelFace = {
   transformStyle: "preserve-3d"
 };
 
-/* UPDATED LABEL POSITION */
-
 const labelContainer = {
   position: "absolute",
   left: "50%",
-  top: "6%",
-  height: "44%",
+  top: "8%",
+  height: "42%",
   transformOrigin: "bottom center",
   display: "flex",
   justifyContent: "center",
